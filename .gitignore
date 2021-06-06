@@ -127,3 +127,6 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+crypto_msg_parser/_lowlevel.py
+crypto_msg_parser/_lowlevel__ffi.py
