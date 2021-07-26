@@ -13,12 +13,12 @@ pip3 install crypto-msg-parser
 ```python
 from crypto_msg_parser import MarketType, parse_trade
 
-json_arr = parse_trade("binance", MarketType.InverseSwap, '{"stream":"btcusd_perp@aggTrade","data":{"e":"aggTrade","E":1616201883458,"a":41045788,"s":"BTCUSD_PERP","p":"58570.1","q":"58","f":91864326,"l":91864327,"T":1616201883304,"m":true}}')
+json_arr = parse_trade("binance", MarketType['inverse_swap'], '{"stream":"btcusd_perp@aggTrade","data":{"e":"aggTrade","E":1616201883458,"a":41045788,"s":"BTCUSD_PERP","p":"58570.1","q":"58","f":91864326,"l":91864327,"T":1616201883304,"m":true}}')
 
 assert len(json_arr) == 1
 trade = json_arr[0]
 assert trade['exchange'] == 'binance'
-assert trade['market_type'] == str(MarketType.InverseSwap)
+assert trade['market_type'] == 'inverse_swap'
 assert trade['msg_type'] == 'trade'
 assert trade['price'] == 58570.1
 assert trade['quantity_base'] == 5800.0 / 58570.1
