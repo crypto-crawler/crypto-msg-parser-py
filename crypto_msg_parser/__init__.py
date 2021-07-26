@@ -1,6 +1,6 @@
 import json
 from enum import Enum
-from typing import Dict, Optional
+from typing import Any, Dict, List, Optional
 
 from crypto_msg_parser._lowlevel import ffi, lib
 
@@ -27,7 +27,7 @@ def parse_trade(
     exchange: str,
     market_type: MarketType,
     msg: str
-)-> Dict:
+)-> List[Dict[str, Any]]:
     json_ptr = lib.parse_trade(
         ffi.new("char[]", exchange.encode("utf-8")),
         market_type.value,
@@ -46,7 +46,7 @@ def parse_l2(
     market_type: MarketType,
     msg: str,
     timestamp: Optional[int] = None,
-)-> Dict:
+)-> List[Dict[str, Any]]:
     json_ptr = lib.parse_l2(
         ffi.new("char[]", exchange.encode("utf-8")),
         market_type.value,
@@ -64,7 +64,7 @@ def parse_funding_rate(
     exchange: str,
     market_type: MarketType,
     msg: str
-)-> Dict:
+)-> List[Dict[str, Any]]:
     json_ptr = lib.parse_funding_rate(
         ffi.new("char[]", exchange.encode("utf-8")),
         market_type.value,
