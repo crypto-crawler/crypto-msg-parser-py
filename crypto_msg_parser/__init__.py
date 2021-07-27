@@ -1,11 +1,11 @@
 import json
-from enum import Enum
+from enum import IntEnum
 from typing import Any, Dict, List, Optional
 
 from crypto_msg_parser._lowlevel import ffi, lib
 
 
-class MarketType(Enum):
+class MarketType(IntEnum):
     '''Market type.'''
     spot = lib.Spot
     linear_future = lib.LinearFuture
