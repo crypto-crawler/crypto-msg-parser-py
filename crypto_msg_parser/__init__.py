@@ -34,7 +34,7 @@ def parse_trade(
         ffi.new("char[]", msg.encode("utf-8")),
     )
     if json_ptr == ffi.NULL:
-        return None
+        return []
     try:
         # Copy the data to a python string, then parse the JSON
         return json.loads(ffi.string(json_ptr).decode('UTF-8'))
@@ -54,7 +54,7 @@ def parse_l2(
         0 if timestamp is None else timestamp,
     )
     if json_ptr == ffi.NULL:
-        return None
+        return []
     try:
         return json.loads(ffi.string(json_ptr).decode('UTF-8'))
     finally:
@@ -71,7 +71,7 @@ def parse_funding_rate(
         ffi.new("char[]", msg.encode("utf-8")),
     )
     if json_ptr == ffi.NULL:
-        return None
+        return []
     try:
         return json.loads(ffi.string(json_ptr).decode('UTF-8'))
     finally:
