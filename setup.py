@@ -9,10 +9,13 @@ def build_native(spec):
     )
     spec.add_cffi_module(
         module_path='crypto_msg_parser._lowlevel',
-        dylib=lambda: build.find_dylib('crypto_msg_parser_ffi', in_path='target/release'),
-        header_filename=lambda: build.find_header('crypto_msg_parser.h', in_path='include'),
+        dylib=lambda: build.find_dylib(
+            'crypto_msg_parser_ffi', in_path='target/release'),
+        header_filename=lambda: build.find_header(
+            'crypto_msg_parser.h', in_path='include'),
         rtld_flags=['NOW', 'NODELETE']
     )
+
 
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
@@ -31,10 +34,10 @@ setup(
     install_requires=['milksnake'],
     milksnake_tasks=[build_native],
     python_requires='>=3.6',
-    classifiers = [
+    classifiers=[
         "Programming Language :: Python :: 3.6",
         "License :: OSI Approved :: Apache Software License",
         'Topic :: Software Development :: Libraries :: Python Modules',
     ],
-    keywords = ['blockchain', 'cryptocurrency', 'trading'],
+    keywords=['blockchain', 'cryptocurrency', 'trading'],
 )
