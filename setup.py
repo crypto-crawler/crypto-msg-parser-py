@@ -1,5 +1,4 @@
 from setuptools import find_packages, setup
-from setuptools.dist import Distribution
 
 
 def build_native(spec):
@@ -22,7 +21,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name='crypto_msg_parser',
-    version="1.0.3",
+    version="1.0.5",
     author="soulmachine",
     description="Parse websocket messages from cryptocurreny exchanges",
     long_description=long_description,
@@ -31,7 +30,7 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     setup_requires=['milksnake'],
-    install_requires=['milksnake'],
+    install_requires=['cffi'],
     milksnake_tasks=[build_native],
     python_requires='>=3.6',
     classifiers=[
