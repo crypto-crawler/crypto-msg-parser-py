@@ -21,7 +21,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name='crypto_msg_parser',
-    version="1.4.9",
+    version="1.5.2",
     author="soulmachine",
     description="Parse websocket messages from cryptocurreny exchanges",
     long_description=long_description,
@@ -33,6 +33,8 @@ setup(
     install_requires=['cffi'],
     milksnake_tasks=[build_native],
     python_requires='>=3.6',
+    license='Apache License 2.0',
+    license_files=('LICENSE',),
     classifiers=[
         "Programming Language :: Python :: 3.6",
         "License :: OSI Approved :: Apache Software License",
