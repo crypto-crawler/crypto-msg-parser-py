@@ -2,18 +2,14 @@ from setuptools import find_packages, setup
 
 
 def build_native(spec):
-    build = spec.add_external_build(
-        cmd=['cargo', 'build', '--release'],
-        path='./crypto-msg-parser-ffi'
-    )
-    spec.add_cffi_module(
-        module_path='crypto_msg_parser._lowlevel',
-        dylib=lambda: build.find_dylib(
-            'crypto_msg_parser_ffi', in_path='target/release'),
-        header_filename=lambda: build.find_header(
-            'crypto_msg_parser.h', in_path='include'),
-        rtld_flags=['NOW', 'NODELETE']
-    )
+    build = spec.add_external_build(cmd=['cargo', 'build', '--release'],
+                                    path='./crypto-msg-parser-ffi')
+    spec.add_cffi_module(module_path='crypto_msg_parser._lowlevel',
+                         dylib=lambda: build.find_dylib(
+                             'crypto_msg_parser_ffi', in_path='target/release'),
+                         header_filename=lambda: build.find_header(
+                             'crypto_msg_parser.h', in_path='include'),
+                         rtld_flags=['NOW', 'NODELETE'])
 
 
 with open("README.md", "r", encoding="utf-8") as fh:
@@ -21,7 +17,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name='crypto_msg_parser',
-    version="1.6.1",
+    version="1.6.5",
     author="soulmachine",
     description="Parse websocket messages from cryptocurreny exchanges",
     long_description=long_description,
