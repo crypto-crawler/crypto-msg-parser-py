@@ -7,6 +7,7 @@ from crypto_msg_parser._lowlevel import ffi, lib
 
 class MarketType(IntEnum):
     '''Market type.'''
+    unknown = lib.Unknown
     spot = lib.Spot
     linear_future = lib.LinearFuture
     inverse_future = lib.InverseFuture
@@ -23,11 +24,8 @@ class MarketType(IntEnum):
     bvol = lib.BVOL
 
 
-def parse_trade(
-    exchange: str,
-    market_type: MarketType,
-    msg: str
-)-> List[Dict[str, Any]]:
+def parse_trade(exchange: str, market_type: MarketType,
+                msg: str) -> List[Dict[str, Any]]:
     json_ptr = lib.parse_trade(
         ffi.new("char[]", exchange.encode("utf-8")),
         market_type.value,
@@ -41,12 +39,13 @@ def parse_trade(
     finally:
         lib.deallocate_string(json_ptr)
 
+
 def parse_l2(
     exchange: str,
     market_type: MarketType,
     msg: str,
     timestamp: Optional[int] = None,
-)-> List[Dict[str, Any]]:
+) -> List[Dict[str, Any]]:
     json_ptr = lib.parse_l2(
         ffi.new("char[]", exchange.encode("utf-8")),
         market_type.value,
@@ -60,11 +59,9 @@ def parse_l2(
     finally:
         lib.deallocate_string(json_ptr)
 
-def parse_funding_rate(
-    exchange: str,
-    market_type: MarketType,
-    msg: str
-)-> List[Dict[str, Any]]:
+
+def parse_funding_rate(exchange: str, market_type: MarketType,
+                       msg: str) -> List[Dict[str, Any]]:
     json_ptr = lib.parse_funding_rate(
         ffi.new("char[]", exchange.encode("utf-8")),
         market_type.value,
