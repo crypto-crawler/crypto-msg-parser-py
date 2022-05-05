@@ -1,3 +1,3 @@
 [submodule "crypto-msg-parser-ffi"]
 	path = crypto-msg-parser-ffi
-	url = git@github.com:soulmachine/crypto-msg-parser-ffi.git
+	url = git@github.com:crypto-crawler/crypto-msg-parser-ffi.git
