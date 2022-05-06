@@ -6,7 +6,8 @@ from crypto_msg_parser._lowlevel import ffi, lib
 
 
 class MarketType(IntEnum):
-    '''Market type.'''
+    """Market type."""
+
     unknown = lib.Unknown
     spot = lib.Spot
     linear_future = lib.LinearFuture
@@ -24,8 +25,9 @@ class MarketType(IntEnum):
     bvol = lib.BVOL
 
 
-def parse_trade(exchange: str, market_type: MarketType,
-                msg: str) -> List[Dict[str, Any]]:
+def parse_trade(
+    exchange: str, market_type: MarketType, msg: str
+) -> List[Dict[str, Any]]:
     json_ptr = lib.parse_trade(
         ffi.new("char[]", exchange.encode("utf-8")),
         market_type.value,
@@ -35,7 +37,7 @@ def parse_trade(exchange: str, market_type: MarketType,
         return []
     try:
         # Copy the data to a python string, then parse the JSON
-        return json.loads(ffi.string(json_ptr).decode('UTF-8'))
+        return json.loads(ffi.string(json_ptr).decode("UTF-8"))
     finally:
         lib.deallocate_string(json_ptr)
 
@@ -55,13 +57,32 @@ def parse_l2(
     if json_ptr == ffi.NULL:
         return []
     try:
-        return json.loads(ffi.string(json_ptr).decode('UTF-8'))
+        return json.loads(ffi.string(json_ptr).decode("UTF-8"))
     finally:
         lib.deallocate_string(json_ptr)
 
 
-def parse_funding_rate(exchange: str, market_type: MarketType,
-                       msg: str) -> List[Dict[str, Any]]:
+def parse_l2_topk(
+    exchange: str,
+    market_type: MarketType,
+    msg: str,
+) -> List[Dict[str, Any]]:
+    json_ptr = lib.parse_l2_topk(
+        ffi.new("char[]", exchange.encode("utf-8")),
+        market_type.value,
+        ffi.new("char[]", msg.encode("utf-8")),
+    )
+    if json_ptr == ffi.NULL:
+        return []
+    try:
+        return json.loads(ffi.string(json_ptr).decode("UTF-8"))
+    finally:
+        lib.deallocate_string(json_ptr)
+
+
+def parse_funding_rate(
+    exchange: str, market_type: MarketType, msg: str
+) -> List[Dict[str, Any]]:
     json_ptr = lib.parse_funding_rate(
         ffi.new("char[]", exchange.encode("utf-8")),
         market_type.value,
@@ -70,6 +91,6 @@ def parse_funding_rate(exchange: str, market_type: MarketType,
     if json_ptr == ffi.NULL:
         return []
     try:
-        return json.loads(ffi.string(json_ptr).decode('UTF-8'))
+        return json.loads(ffi.string(json_ptr).decode("UTF-8"))
     finally:
         lib.deallocate_string(json_ptr)

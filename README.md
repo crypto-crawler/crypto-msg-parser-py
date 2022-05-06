@@ -1,6 +1,6 @@
 # crypto-msg-parser
 
-Python bindings for the [crypto-msg-parser](https://github.com/soulmachine/crypto-crawler-rs/tree/main/crypto-msg-parser) library.
+Python bindings for the [crypto-msg-parser](https://github.com/crypto-crawler/crypto-crawler-rs/tree/main/crypto-msg-parser) library.
 
 ## Quickstart
 
