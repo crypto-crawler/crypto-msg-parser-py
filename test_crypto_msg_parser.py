@@ -1,7 +1,12 @@
 #!/usr/bin/env python3
 
-from crypto_msg_parser import (MarketType, parse_funding_rate, parse_l2,
-                               parse_trade)
+from crypto_msg_parser import (
+    MarketType,
+    parse_funding_rate,
+    parse_l2,
+    parse_l2_topk,
+    parse_trade,
+)
 
 
 def test_parse_trade():
@@ -37,8 +42,10 @@ def test_parse_l2():
     assert len(orderbook["bids"]) == 2
     assert orderbook["snapshot"] == False
     assert orderbook["timestamp"] == 1622370862553
-    assert orderbook["bids"][0][0] == 35425.8
-    assert orderbook["bids"][0][3] == 561.0
+    assert orderbook["seq_id"] == 127559588177
+    assert orderbook["prev_seq_id"] == 127559587113
+    assert orderbook["bids"][0][0] == 35365.9
+    assert orderbook["bids"][0][3] == 1400.0
     assert orderbook["asks"][0][0] == 35817.8
     assert orderbook["asks"][0][3] == 7885.0
 
@@ -52,16 +59,18 @@ def test_parse_l2_topk():
     assert len(json_arr) == 1
     orderbook = json_arr[0]
     assert orderbook["exchange"] == "binance"
-    assert orderbook["market_type"] == "inverse_swap"
-    assert orderbook["msg_type"] == "l2_event"
+    assert orderbook["market_type"] == "linear_swap"
+    assert orderbook["msg_type"] == "l2_topk"
     assert len(orderbook["asks"]) == 3
     assert len(orderbook["bids"]) == 3
     assert orderbook["snapshot"] == True
-    assert orderbook["timestamp"] == 1622370862553
-    assert orderbook["bids"][0][0] == 35425.8
-    assert orderbook["bids"][0][3] == 561.0
-    assert orderbook["asks"][0][0] == 35817.8
-    assert orderbook["asks"][0][3] == 7885.0
+    assert orderbook["timestamp"] == 1651122265854
+    assert orderbook["seq_id"] == 1437010882721
+    assert orderbook["prev_seq_id"] == 1437010873329
+    assert orderbook["bids"][0][0] == 2886.71
+    assert orderbook["bids"][0][3] == 0.454
+    assert orderbook["asks"][0][0] == 2886.72
+    assert orderbook["asks"][0][3] == 77.215
 
 
 def test_parse_funding_rate():
