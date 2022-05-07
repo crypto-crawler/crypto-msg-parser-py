@@ -2,11 +2,21 @@
 
 from crypto_msg_parser import (
     MarketType,
+    extract_symbol,
     parse_funding_rate,
     parse_l2,
     parse_l2_topk,
     parse_trade,
 )
+
+
+def test_extract_symbol():
+    symbol = extract_symbol(
+        "binance",
+        MarketType["inverse_swap"],
+        '{"stream":"btcusd_perp@aggTrade","data":{"e":"aggTrade","E":1616201883458,"a":41045788,"s":"BTCUSD_PERP","p":"58570.1","q":"58","f":91864326,"l":91864327,"T":1616201883304,"m":true}}',
+    )
+    assert "BTCUSD_PERP" == symbol
 
 
 def test_parse_trade():

@@ -25,6 +25,23 @@ class MarketType(IntEnum):
     bvol = lib.BVOL
 
 
+def extract_symbol(
+    exchange: str, market_type: MarketType, msg: str
+) -> Optional[str]:
+    json_ptr = lib.extract_symbol(
+        ffi.new("char[]", exchange.encode("utf-8")),
+        market_type.value,
+        ffi.new("char[]", msg.encode("utf-8")),
+    )
+    if json_ptr == ffi.NULL:
+        return None
+    try:
+        # Copy the data to a python string, then parse the JSON
+        return json.loads(ffi.string(json_ptr).decode("UTF-8"))
+    finally:
+        lib.deallocate_string(json_ptr)
+
+
 def parse_trade(
     exchange: str, market_type: MarketType, msg: str
 ) -> List[Dict[str, Any]]:
@@ -43,10 +60,7 @@ def parse_trade(
 
 
 def parse_l2(
-    exchange: str,
-    market_type: MarketType,
-    msg: str,
-    timestamp: Optional[int] = None,
+    exchange: str, market_type: MarketType, msg: str, timestamp: Optional[int] = None,
 ) -> List[Dict[str, Any]]:
     json_ptr = lib.parse_l2(
         ffi.new("char[]", exchange.encode("utf-8")),
@@ -63,9 +77,7 @@ def parse_l2(
 
 
 def parse_l2_topk(
-    exchange: str,
-    market_type: MarketType,
-    msg: str,
+    exchange: str, market_type: MarketType, msg: str,
 ) -> List[Dict[str, Any]]:
     json_ptr = lib.parse_l2_topk(
         ffi.new("char[]", exchange.encode("utf-8")),

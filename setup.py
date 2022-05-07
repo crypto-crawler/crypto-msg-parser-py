@@ -43,7 +43,7 @@ with open("crypto-msg-parser-ffi/cbindgen.toml", "w",
 
 setup(
     name='crypto_msg_parser',
-    version="1.8.0",
+    version="1.8.1",
     author="soulmachine",
     description="Parse websocket messages from cryptocurreny exchanges",
     long_description=long_description,
