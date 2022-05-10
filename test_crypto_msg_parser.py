@@ -3,6 +3,7 @@
 from crypto_msg_parser import (
     MarketType,
     extract_symbol,
+    extract_timestamp,
     parse_funding_rate,
     parse_l2,
     parse_l2_topk,
@@ -17,6 +18,16 @@ def test_extract_symbol():
         '{"stream":"btcusd_perp@aggTrade","data":{"e":"aggTrade","E":1616201883458,"a":41045788,"s":"BTCUSD_PERP","p":"58570.1","q":"58","f":91864326,"l":91864327,"T":1616201883304,"m":true}}',
     )
     assert "BTCUSD_PERP" == symbol
+
+
+def test_extract_timestamp():
+    timestamp = extract_timestamp(
+        "binance",
+        MarketType["inverse_swap"],
+        '{"stream":"btcusd_perp@markPrice","data":{"e":"markPriceUpdate","E":1617309477000,"s":"BTCUSD_PERP","p":"59012.56007222","P":"58896.00503145","r":"0.00073689","T":1617321600000}}',
+        None,
+    )
+    assert timestamp == 1617309477000
 
 
 def test_parse_trade():

@@ -25,9 +25,7 @@ class MarketType(IntEnum):
     bvol = lib.BVOL
 
 
-def extract_symbol(
-    exchange: str, market_type: MarketType, msg: str
-) -> Optional[str]:
+def extract_symbol(exchange: str, market_type: MarketType, msg: str) -> Optional[str]:
     json_ptr = lib.extract_symbol(
         ffi.new("char[]", exchange.encode("utf-8")),
         market_type.value,
@@ -40,6 +38,21 @@ def extract_symbol(
         return json.loads(ffi.string(json_ptr).decode("UTF-8"))
     finally:
         lib.deallocate_string(json_ptr)
+
+
+def extract_timestamp(
+    exchange: str, market_type: MarketType, msg: str, received_at: Optional[int] = None,
+) -> Optional[str]:
+    timestamp = lib.extract_timestamp(
+        ffi.new("char[]", exchange.encode("utf-8")),
+        market_type.value,
+        ffi.new("char[]", msg.encode("utf-8")),
+        0 if received_at is None else received_at,
+    )
+    if timestamp == 0:
+        return None
+    else:
+        return timestamp
 
 
 def parse_trade(
