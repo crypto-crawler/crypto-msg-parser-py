@@ -25,9 +25,9 @@ def test_extract_timestamp():
         "binance",
         MarketType["inverse_swap"],
         '{"stream":"btcusd_perp@markPrice","data":{"e":"markPriceUpdate","E":1617309477000,"s":"BTCUSD_PERP","p":"59012.56007222","P":"58896.00503145","r":"0.00073689","T":1617321600000}}',
-        None,
     )
-    assert timestamp == 1617309477000
+    assert timestamp.is_ok()
+    assert timestamp.unwrap() == 1617309477000
 
 
 def test_parse_trade():

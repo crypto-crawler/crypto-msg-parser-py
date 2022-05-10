@@ -2,6 +2,8 @@ import json
 from enum import IntEnum
 from typing import Any, Dict, List, Optional
 
+from result import Err, Ok, Result
+
 from crypto_msg_parser._lowlevel import ffi, lib
 
 
@@ -41,18 +43,19 @@ def extract_symbol(exchange: str, market_type: MarketType, msg: str) -> Optional
 
 
 def extract_timestamp(
-    exchange: str, market_type: MarketType, msg: str, received_at: Optional[int] = None,
-) -> Optional[str]:
-    timestamp = lib.extract_timestamp(
+    exchange: str, market_type: MarketType, msg: str
+) -> Result[Optional[int], str]:
+    timestamp: int = lib.extract_timestamp(
         ffi.new("char[]", exchange.encode("utf-8")),
         market_type.value,
         ffi.new("char[]", msg.encode("utf-8")),
-        0 if received_at is None else received_at,
     )
     if timestamp == 0:
-        return None
+        return Ok(None)
+    elif timestamp < 0:
+        return Err(f"Failed to parse {msg}")
     else:
-        return timestamp
+        return Ok(timestamp)
 
 
 def parse_trade(

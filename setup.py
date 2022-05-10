@@ -43,7 +43,7 @@ with open("crypto-msg-parser-ffi/cbindgen.toml", "w",
 
 setup(
     name='crypto_msg_parser',
-    version="2.0.5",
+    version="2.0.7",
     author="soulmachine",
     description="Parse websocket messages from cryptocurreny exchanges",
     long_description=long_description,
@@ -52,7 +52,7 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     setup_requires=['milksnake'],
-    install_requires=['cffi'],
+    install_requires=['cffi', 'result'],
     milksnake_tasks=[build_native],
     python_requires='>=3.6',
     license='Apache License 2.0',
