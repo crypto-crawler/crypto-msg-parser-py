@@ -2,8 +2,12 @@
 
 from crypto_msg_parser import (
     MarketType,
+    MessageType,
     extract_symbol,
     extract_timestamp,
+    get_msg_type,
+    parse_bbo,
+    parse_candlestick,
     parse_funding_rate,
     parse_l2,
     parse_l2_topk,
@@ -28,6 +32,14 @@ def test_extract_timestamp():
     )
     assert timestamp.is_ok()
     assert timestamp.unwrap() == 1617309477000
+
+
+def test_get_msg_type():
+    msg_type = get_msg_type(
+        "binance",
+        '{"stream":"btcusd_perp@aggTrade","data":{"e":"aggTrade","E":1616201883458,"a":41045788,"s":"BTCUSD_PERP","p":"58570.1","q":"58","f":91864326,"l":91864327,"T":1616201883304,"m":true}}',
+    )
+    assert MessageType.trade == msg_type
 
 
 def test_parse_trade():
@@ -62,7 +74,7 @@ def test_parse_l2():
     assert len(orderbook["asks"]) == 2
     assert len(orderbook["bids"]) == 2
     assert orderbook["snapshot"] == False
-    assert orderbook["timestamp"] == 1622370862553
+    assert orderbook["timestamp"] == 1622370862564
     assert orderbook["seq_id"] == 127559588177
     assert orderbook["prev_seq_id"] == 127559587113
     assert orderbook["bids"][0][0] == 35365.9
@@ -85,13 +97,39 @@ def test_parse_l2_topk():
     assert len(orderbook["asks"]) == 3
     assert len(orderbook["bids"]) == 3
     assert orderbook["snapshot"] == True
-    assert orderbook["timestamp"] == 1651122265854
+    assert orderbook["timestamp"] == 1651122265861
     assert orderbook["seq_id"] == 1437010882721
     assert orderbook["prev_seq_id"] == 1437010873329
     assert orderbook["bids"][0][0] == 2886.71
     assert orderbook["bids"][0][3] == 0.454
     assert orderbook["asks"][0][0] == 2886.72
     assert orderbook["asks"][0][3] == 77.215
+
+
+def test_parse_bbo():
+    json_arr = parse_bbo(
+        "binance",
+        MarketType["linear_swap"],
+        '{"stream":"ethusdt@bookTicker","data":{"e":"bookTicker","u":1553413152520,"s":"ETHUSDT","b":"1778.54","B":"15.164","a":"1778.55","A":"7.289","T":1653817855284,"E":1653817855289}}',
+    )
+    assert len(json_arr) == 1
+    bbo_msg = json_arr[0]
+    assert bbo_msg["exchange"] == "binance"
+    assert bbo_msg["market_type"] == "linear_swap"
+    assert bbo_msg["msg_type"] == "bbo"
+    assert bbo_msg["symbol"] == "ETHUSDT"
+    assert bbo_msg["timestamp"] == 1653817855289
+    assert bbo_msg["id"] == 1553413152520
+
+    assert bbo_msg["ask_price"] == 1778.55
+    assert bbo_msg["ask_quantity_base"] == 7.289
+    assert bbo_msg["ask_quantity_quote"] == 1778.55 * 7.289
+    assert bbo_msg["ask_quantity_contract"] == 7.289
+
+    assert bbo_msg["bid_price"] == 1778.54
+    assert bbo_msg["bid_quantity_base"] == 15.164
+    assert bbo_msg["bid_quantity_quote"] == 1778.54 * 15.164
+    assert bbo_msg["bid_quantity_contract"] == 15.164
 
 
 def test_parse_funding_rate():
@@ -108,3 +146,27 @@ def test_parse_funding_rate():
     assert rate["pair"] == "BTC/USD"
     assert rate["funding_rate"] == 0.00073689
     assert rate["funding_time"] == 1617321600000
+
+
+def test_parse_candlestick():
+    json_arr = parse_candlestick(
+        "binance",
+        MarketType["linear_swap"],
+        '{"stream":"btcusdt@kline_1M","data":{"e":"kline","E":1653819041520,"s":"BTCUSDT","k":{"t":1651363200000,"T":1654041599999,"s":"BTCUSDT","i":"1M","f":2172726276,"L":2301806561,"o":"37614.40","c":"29075.50","h":"40071.70","l":"26631.00","v":"13431981.671","n":129025447,"x":false,"q":"423075730671.12853","V":"6700065.176","Q":"211000435586.65000","B":"0"}}}',
+    )
+    assert len(json_arr) == 1
+    candlestick_msg = json_arr[0]
+    assert candlestick_msg["exchange"] == "binance"
+    assert candlestick_msg["market_type"] == "linear_swap"
+    assert candlestick_msg["msg_type"] == "candlestick"
+    assert candlestick_msg["symbol"] == "BTCUSDT"
+    assert candlestick_msg["timestamp"] == 1653819041520
+    assert candlestick_msg["period"] == "1M"
+    assert candlestick_msg["begin_time"] == 1651363200
+
+    assert candlestick_msg["open"] == 37614.40
+    assert candlestick_msg["high"] == 40071.70
+    assert candlestick_msg["low"] == 26631.0
+    assert candlestick_msg["close"] == 29075.5
+    assert candlestick_msg["volume"] == 13431981.671
+    assert candlestick_msg["quote_volume"] == 423075730671.12853

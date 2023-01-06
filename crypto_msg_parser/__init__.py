@@ -27,6 +27,23 @@ class MarketType(IntEnum):
     bvol = lib.BVOL
 
 
+class MessageType(IntEnum):
+    """Message type."""
+
+    other = lib.Other
+    trade = lib.Trade
+    l2_event = lib.L2Event
+    l2_snapshot = lib.L2Snapshot
+    l2_topk = lib.L2TopK
+    l3_event = lib.L3Event
+    l3_snapshot = lib.L3Snapshot
+    bbo = lib.BBO
+    ticker = lib.Ticker
+    candlestick = lib.Candlestick
+    funding_rate = lib.FundingRate
+    open_interest = lib.OpenInterest
+
+
 def extract_symbol(exchange: str, market_type: MarketType, msg: str) -> Optional[str]:
     json_ptr = lib.extract_symbol(
         ffi.new("char[]", exchange.encode("utf-8")),
@@ -58,6 +75,14 @@ def extract_timestamp(
         return Ok(timestamp)
 
 
+def get_msg_type(exchange: str, msg: str) -> MessageType:
+    msg_type = lib.get_msg_type(
+        ffi.new("char[]", exchange.encode("utf-8")),
+        ffi.new("char[]", msg.encode("utf-8")),
+    )
+    return MessageType(msg_type)
+
+
 def parse_trade(
     exchange: str, market_type: MarketType, msg: str
 ) -> List[Dict[str, Any]]:
@@ -76,13 +101,16 @@ def parse_trade(
 
 
 def parse_l2(
-    exchange: str, market_type: MarketType, msg: str, timestamp: Optional[int] = None,
+    exchange: str,
+    market_type: MarketType,
+    msg: str,
+    received_at: Optional[int] = None,
 ) -> List[Dict[str, Any]]:
     json_ptr = lib.parse_l2(
         ffi.new("char[]", exchange.encode("utf-8")),
         market_type.value,
         ffi.new("char[]", msg.encode("utf-8")),
-        0 if timestamp is None else timestamp,
+        0 if received_at is None else received_at,
     )
     if json_ptr == ffi.NULL:
         return []
@@ -93,12 +121,56 @@ def parse_l2(
 
 
 def parse_l2_topk(
-    exchange: str, market_type: MarketType, msg: str,
+    exchange: str,
+    market_type: MarketType,
+    msg: str,
+    received_at: Optional[int] = None,
 ) -> List[Dict[str, Any]]:
     json_ptr = lib.parse_l2_topk(
         ffi.new("char[]", exchange.encode("utf-8")),
         market_type.value,
         ffi.new("char[]", msg.encode("utf-8")),
+        0 if received_at is None else received_at,
+    )
+    if json_ptr == ffi.NULL:
+        return []
+    try:
+        return json.loads(ffi.string(json_ptr).decode("UTF-8"))
+    finally:
+        lib.deallocate_string(json_ptr)
+
+
+def parse_bbo(
+    exchange: str,
+    market_type: MarketType,
+    msg: str,
+    received_at: Optional[int] = None,
+) -> List[Dict[str, Any]]:
+    json_ptr = lib.parse_bbo(
+        ffi.new("char[]", exchange.encode("utf-8")),
+        market_type.value,
+        ffi.new("char[]", msg.encode("utf-8")),
+        0 if received_at is None else received_at,
+    )
+    if json_ptr == ffi.NULL:
+        return []
+    try:
+        return json.loads(ffi.string(json_ptr).decode("UTF-8"))
+    finally:
+        lib.deallocate_string(json_ptr)
+
+
+def parse_candlestick(
+    exchange: str,
+    market_type: MarketType,
+    msg: str,
+    received_at: Optional[int] = None,
+) -> List[Dict[str, Any]]:
+    json_ptr = lib.parse_candlestick(
+        ffi.new("char[]", exchange.encode("utf-8")),
+        market_type.value,
+        ffi.new("char[]", msg.encode("utf-8")),
+        0 if received_at is None else received_at,
     )
     if json_ptr == ffi.NULL:
         return []
@@ -109,12 +181,16 @@ def parse_l2_topk(
 
 
 def parse_funding_rate(
-    exchange: str, market_type: MarketType, msg: str
+    exchange: str,
+    market_type: MarketType,
+    msg: str,
+    received_at: Optional[int] = None,
 ) -> List[Dict[str, Any]]:
     json_ptr = lib.parse_funding_rate(
         ffi.new("char[]", exchange.encode("utf-8")),
         market_type.value,
         ffi.new("char[]", msg.encode("utf-8")),
+        0 if received_at is None else received_at,
     )
     if json_ptr == ffi.NULL:
         return []
