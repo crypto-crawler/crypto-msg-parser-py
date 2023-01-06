@@ -17,14 +17,14 @@ json_arr = parse_trade("binance", MarketType['inverse_swap'], '{"stream":"btcusd
 
 assert len(json_arr) == 1
 trade = json_arr[0]
-assert trade['exchange'] == 'binance'
-assert trade['market_type'] == 'inverse_swap'
-assert trade['msg_type'] == 'trade'
-assert trade['price'] == 58570.1
-assert trade['quantity_base'] == 5800.0 / 58570.1
-assert trade['quantity_quote'] == 5800.0
-assert trade['quantity_contract'] == 58.0
-assert trade['side'] == 'sell'
+assert trade["exchange"] == "binance"
+assert trade["market_type"] == "inverse_swap"
+assert trade["msg_type"] == "trade"
+assert trade["price"] == 58570.1
+assert trade["quantity_base"] == 5800.0 / 58570.1
+assert trade["quantity_quote"] == 5800.0
+assert trade["quantity_contract"] == 58.0
+assert trade["side"] == "sell"
 ```
 
 Another example, parsing the output of `crypto-crawler`:
@@ -40,4 +40,3 @@ crawl_trade(
     lambda msg: print(parse_trade(msg.exchange, msg.market_type, msg.json))
 )
 ```
-
